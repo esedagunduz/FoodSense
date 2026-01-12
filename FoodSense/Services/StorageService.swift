@@ -99,20 +99,11 @@ final class StorageService:StorageServiceProtocol{
         
         if let entity = profiles.first {
             return entity.toUserProfile()
-        } else {
-            let defaultProfile = UserProfile(
-                name: "Kullanıcı",
-                goals: NutritionGoals(
-                    calories: 2000,
-                    protein: 150,
-                    carbs: 250,
-                    fat: 65
-                )
-            )
-            
+        }
+    
+        let defaultProfile = UserProfile()
             try await saveUserProfile(defaultProfile)
             return defaultProfile
-        }
     }
 }
 // MARK: - Storage Error
@@ -141,7 +132,6 @@ enum StorageError: LocalizedError {
 
 
 extension StorageService{
-    @MainActor
     static func create()throws ->StorageService{
         let schema = Schema([
             MealEntity.self,

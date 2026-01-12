@@ -6,12 +6,25 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct FoodSenseApp: App {
+    private let storageService: StorageService
+    
+    init() {
+        do {
+            self.storageService = try StorageService.create()
+        } catch {
+            fatalError("Failed to initialize storage: \(error)")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView(
+                viewModel: HomeViewModel(storageService: storageService)
+            )
         }
     }
 }

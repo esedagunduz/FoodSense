@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct Meal:Identifiable,Codable{
+struct Meal:Identifiable,Codable,Equatable{
     let id:UUID
     let name:String
     let calories:Double
@@ -56,18 +56,10 @@ struct Meal:Identifiable,Codable{
 // MARK: - Mock Data
 extension Meal {
     
-    static let sample = Meal(
-        name: "Grilled Chicken Salad",
-        calories: 450,
-        protein: 35,
-        carbs: 25,
-        fat: 18
-    )
-    
     static let samples: [Meal] = [
         Meal(
             name: "Breakfast Oatmeal",
-            date: Date().addingTimeInterval(-3600 * 3),
+            date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!,
             calories: 320,
             protein: 12,
             carbs: 55,

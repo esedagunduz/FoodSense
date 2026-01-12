@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct DailySummary:Codable{
+struct DailySummary:Codable,Equatable{
     let date:Date
     let meals:[Meal]
     let goals:NutritionGoals
