@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0451CC462F197E07009601C9 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 0451CC452F197E07009601C9 /* GoogleGenerativeAI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		0448B4A92F11A13B00DF72E9 /* FoodSense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodSense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0451CC462F197E07009601C9 /* GoogleGenerativeAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = FoodSense;
 			packageProductDependencies = (
+				0451CC452F197E07009601C9 /* GoogleGenerativeAI */,
 			);
 			productName = FoodSense;
 			productReference = 0448B4A92F11A13B00DF72E9 /* FoodSense.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 0448B4A02F11A13B00DF72E9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0451CC442F197E07009601C9 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0448B4AA2F11A13B00DF72E9 /* Products */;
 			projectDirPath = "";
@@ -343,6 +352,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0451CC442F197E07009601C9 /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/generative-ai-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0451CC452F197E07009601C9 /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0451CC442F197E07009601C9 /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0448B4A12F11A13B00DF72E9 /* Project object */;
 }
