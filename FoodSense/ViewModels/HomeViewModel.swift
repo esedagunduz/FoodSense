@@ -40,7 +40,7 @@ enum HomeError:LocalizedError{
 
 @MainActor
 final class HomeViewModel:ObservableObject{
-    private let storageService:StorageServiceProtocol
+     let storageService:StorageServiceProtocol
     @Published private(set) var state : HomeState
     
     

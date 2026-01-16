@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct FoodScanResult:Codable{
+struct FoodScanResult:Codable,Equatable{
     let foodName: String
     let calories: Double
     let protein: Double
