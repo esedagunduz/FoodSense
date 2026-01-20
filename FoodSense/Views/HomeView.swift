@@ -315,7 +315,7 @@ struct MealCard: View {
                 Text(meal.name)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(AppColors.primaryText)
-                    .lineLimit(1)
+                    .lineLimit(nil)
                 
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
