@@ -7,16 +7,8 @@
 
 import Foundation
 import SwiftData
-@MainActor
-final class StorageService:StorageServiceProtocol{
-    
-    private let modelContainer:ModelContainer
-    private let modelContext:ModelContext
-    
-    init(modelContainer: ModelContainer) {
-        self.modelContainer = modelContainer
-        self.modelContext = modelContainer.mainContext
-    }
+@ModelActor
+actor StorageService:StorageServiceProtocol{
     
     func saveMeal(_ meal: Meal) async throws {
         let descriptor = FetchDescriptor<MealEntity>(
@@ -93,7 +85,7 @@ final class StorageService:StorageServiceProtocol{
         try modelContext.save()
     }
     
-    func fetchUserProfile() async throws -> UserProfile {
+    func fetchUserProfile() async throws -> UserProfile? {
         let descriptor = FetchDescriptor<UserProfileEntity>()
         let profiles = try modelContext.fetch(descriptor)
         
@@ -104,6 +96,22 @@ final class StorageService:StorageServiceProtocol{
         let defaultProfile = UserProfile()
             try await saveUserProfile(defaultProfile)
             return defaultProfile
+    }
+    
+    func deleteOldMeals(before date: Date) async throws {
+        let descriptor = FetchDescriptor<MealEntity>(
+            predicate: #Predicate { meal in
+                meal.date < date
+            }
+        )
+        let oldMeals = try modelContext.fetch(descriptor)
+        
+        guard !oldMeals.isEmpty else { return }
+        
+        for meal in oldMeals {
+            modelContext.delete(meal)
+        }
+        try modelContext.save()
     }
 }
 // MARK: - Storage Error
@@ -130,23 +138,4 @@ enum StorageError: LocalizedError {
     }
 }
 
-
-extension StorageService{
-    static func create()throws ->StorageService{
-        let schema = Schema([
-            MealEntity.self,
-            UserProfileEntity.self
-        ])
-        let modelConfiguration = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: false
-        )
-        let container = try ModelContainer(
-            for: schema,
-            configurations: [modelConfiguration]
-        )
-        return StorageService(modelContainer: container)
-    }
-    
-}
 

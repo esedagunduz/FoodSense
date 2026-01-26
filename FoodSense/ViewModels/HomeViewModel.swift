@@ -100,7 +100,7 @@ final class HomeViewModel:ObservableObject{
             let summary = DailySummary(
                 date: state.selectedDate,
                 meals: meals,
-                goals: userProfile.goals
+                goals: userProfile!.goals
             )
             state.dailySummary = summary
         }catch{

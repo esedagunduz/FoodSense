@@ -13,6 +13,5 @@ protocol StorageServiceProtocol{
     func deleteMeal(_ meal:Meal) async throws
     
     func saveUserProfile(_ profile: UserProfile) async throws
-    func fetchUserProfile() async throws -> UserProfile
-    
+    func fetchUserProfile() async throws -> UserProfile?
 }

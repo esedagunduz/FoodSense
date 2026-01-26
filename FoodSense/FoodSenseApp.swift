@@ -7,14 +7,32 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
 
 @main
 struct FoodSenseApp: App {
-    private let storageService: StorageService
+    
+    private let repository: StorageRepository
     
     init() {
+        FirebaseApp.configure()
+        
         do {
-            self.storageService = try StorageService.create()
+            let container = try ModelContainer(
+                for: Schema([
+                    MealEntity.self,
+                    UserProfileEntity.self
+                ])
+            )
+            
+            let localService = StorageService(modelContainer: container)
+            let remoteService = FirebaseStorageService()
+            
+            self.repository = StorageRepository(
+                localService: localService,
+                remoteService: remoteService
+            )
+            
         } catch {
             fatalError("Failed to initialize storage: \(error)")
         }
@@ -22,9 +40,7 @@ struct FoodSenseApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView(
-                viewModel: HomeViewModel(storageService: storageService)
-            )
+            MainTabView(storageService: repository)
         }
     }
 }

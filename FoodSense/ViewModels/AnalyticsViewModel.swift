@@ -48,7 +48,7 @@ final class AnalyticsViewModel: ObservableObject {
                 return
             }
             
-            state.analytics = calculateAnalytics(meals: meals, goals: profile.goals, dateRange: dateRange)
+            state.analytics = calculateAnalytics(meals: meals, goals: profile!.goals, dateRange: dateRange)
         } catch {
             state.error = .loadFailed
             state.analytics = .empty

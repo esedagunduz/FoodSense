@@ -40,7 +40,7 @@ final class MockStorageService: StorageServiceProtocol {
         self.profile = profile
     }
     
-    func fetchUserProfile() async throws -> UserProfile {
+    func fetchUserProfile() async throws -> UserProfile? {
         return profile
     }
 }

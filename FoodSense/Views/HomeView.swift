@@ -10,7 +10,6 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     @State private var showCalendar = false
-    @State private var showingScan = false
     
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -35,17 +34,6 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 20)
             }
-            Button {
-                showingScan = true
-            } label: {
-                Image(systemName: "camera.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(AppColors.accent)
-                    .clipShape(Circle())
-            }
-            .padding(.bottom, 32)
         }
         .onAppear {
             viewModel.loadMeals()
@@ -93,14 +81,6 @@ struct HomeView: View {
                     .foregroundColor(AppColors.accent)
                 )
             }
-        }
-        .fullScreenCover(isPresented: $showingScan) {
-            ScanView(
-                viewModel: ScanViewModel(
-                    scanService: GeminiFoodScanService(),
-                    storageService: viewModel.storageService
-                )
-            )
         }
     }
     

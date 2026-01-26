@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0451CC462F197E07009601C9 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 0451CC452F197E07009601C9 /* GoogleGenerativeAI */; };
+		048646DA2F26394E005A63C5 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 048646D92F26394E005A63C5 /* FirebaseAuth */; };
+		048646DC2F26394E005A63C5 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 048646DB2F26394E005A63C5 /* FirebaseFirestore */; };
+		048646DE2F26394E005A63C5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 048646DD2F26394E005A63C5 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +44,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0451CC462F197E07009601C9 /* GoogleGenerativeAI in Frameworks */,
+				048646DE2F26394E005A63C5 /* FirebaseStorage in Frameworks */,
+				048646DA2F26394E005A63C5 /* FirebaseAuth in Frameworks */,
+				048646DC2F26394E005A63C5 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +90,9 @@
 			name = FoodSense;
 			packageProductDependencies = (
 				0451CC452F197E07009601C9 /* GoogleGenerativeAI */,
+				048646D92F26394E005A63C5 /* FirebaseAuth */,
+				048646DB2F26394E005A63C5 /* FirebaseFirestore */,
+				048646DD2F26394E005A63C5 /* FirebaseStorage */,
 			);
 			productName = FoodSense;
 			productReference = 0448B4A92F11A13B00DF72E9 /* FoodSense.app */;
@@ -115,6 +124,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				0451CC442F197E07009601C9 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+				048646D82F26394E005A63C5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0448B4AA2F11A13B00DF72E9 /* Products */;
@@ -368,6 +378,14 @@
 				minimumVersion = 0.5.6;
 			};
 		};
+		048646D82F26394E005A63C5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -375,6 +393,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0451CC442F197E07009601C9 /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
 			productName = GoogleGenerativeAI;
+		};
+		048646D92F26394E005A63C5 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048646D82F26394E005A63C5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		048646DB2F26394E005A63C5 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048646D82F26394E005A63C5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		048646DD2F26394E005A63C5 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048646D82F26394E005A63C5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
