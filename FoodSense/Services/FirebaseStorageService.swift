@@ -48,7 +48,7 @@ final class FirebaseStorageService: StorageServiceProtocol {
     // MARK: - Meal Operations
     
     func saveMeal(_ meal: Meal) async throws {
-        let data: [String: Any] = [
+        var data: [String: Any] = [
             "id": meal.id.uuidString,
             "name": meal.name,
             "calories": meal.calories,
@@ -56,9 +56,11 @@ final class FirebaseStorageService: StorageServiceProtocol {
             "carbs": meal.carbs,
             "fat": meal.fat,
             "date": Timestamp(date: meal.date),
-            "imageURL": meal.imageURL ?? "",
             "syncedAt": FieldValue.serverTimestamp()
         ]
+        if let imageData = meal.imageData {
+            data["imageData"] = imageData.base64EncodedString()
+        }
         
         let collection = await mealsCollection()
         try await collection.document(meal.id.uuidString).setData(data)
@@ -91,6 +93,11 @@ final class FirebaseStorageService: StorageServiceProtocol {
                 let timestamp = data["date"] as? Timestamp
             else { return nil }
             
+            var imageData: Data?
+            if let base64String = data["imageData"] as? String {
+                imageData = Data(base64Encoded: base64String)
+            }
+            
             return Meal(
                 id: id,
                 name: name,
@@ -99,7 +106,7 @@ final class FirebaseStorageService: StorageServiceProtocol {
                 protein: protein,
                 carbs: carbs,
                 fat: fat,
-                imageURL: data["imageURL"] as? String
+                imageData: imageData
             )
         }
     }

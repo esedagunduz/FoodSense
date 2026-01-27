@@ -48,13 +48,20 @@ final class ScanViewModel:ObservableObject{
     @Published private(set) var state:ScanState
     private let scanService:FoodScanServiceProtocol
     private let storageService:StorageServiceProtocol
+    private let selectedDate: Date
+    private let onMealSaved: (() -> Void)?
+    
     init( scanService: FoodScanServiceProtocol,
           storageService: StorageServiceProtocol,
-          state: ScanState = ScanState()
+          state: ScanState = ScanState(),
+          selectedDate: Date = Date(),
+          onMealSaved: (() -> Void)? = nil
     ) {
         self.scanService = scanService
         self.storageService = storageService
         self.state = state
+        self.onMealSaved = onMealSaved
+        self.selectedDate = selectedDate
     }
     
     func selectImage(_ image:UIImage){
@@ -94,11 +101,13 @@ final class ScanViewModel:ObservableObject{
             state.error = .saveFailed("No analysis result to save")
             return
         }
-        let meal = result.toMeal()
+        let imageData = state.selectedImage?.optimizedImageData()
+        let meal = result.toMeal(imageData: imageData, date: selectedDate)
         
         Task {
             do{
                 try await storageService.saveMeal(meal)
+                onMealSaved?()
                 state.shouldDismiss = true
             }catch{
                 state.error = .saveFailed(error.localizedDescription)

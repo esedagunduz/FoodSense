@@ -155,6 +155,12 @@ struct HomeView: View {
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(AppColors.secondaryText)
                     }
+                    if viewModel.state.dailySummary.isOverCalorieGoal {
+                        Text("+\(Int(viewModel.state.dailySummary.calorieOverage)) calories over")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(AppColors.accent)
+                            .padding(.top, 2)
+                    }
                 }
             }
             .frame(height: 160)
@@ -285,10 +291,20 @@ struct MealCard: View {
                     .fill(Color.gray.opacity(0.15))
                     .frame(height: 140)
                     .overlay {
-                        Image(systemName: "photo")
-                            .font(.system(size: 30))
-                            .foregroundColor(Color.gray.opacity(0.3))
+                        if let imageData = meal.imageData,
+                           let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity, maxHeight: 140)
+                                .clipped()
+                        } else {
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(Color.gray.opacity(0.3))
+                        }
                     }
+                    .clipped()
             }
             
             VStack(alignment: .leading, spacing: 8) {
@@ -296,6 +312,8 @@ struct MealCard: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(AppColors.primaryText)
                     .lineLimit(nil)
+                    .minimumScaleFactor(0.5)
+                    .frame(height: 36)
                 
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")

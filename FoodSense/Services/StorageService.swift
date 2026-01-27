@@ -24,7 +24,7 @@ actor StorageService:StorageServiceProtocol{
             existing.carbs = meal.carbs
             existing.fat = meal.fat
             existing.date = meal.date
-            existing.imageURL = meal.imageURL
+            existing.imageData = meal.imageData
         } else {
             let entity = MealEntity(from: meal)
             modelContext.insert(entity)

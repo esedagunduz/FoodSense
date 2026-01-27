@@ -18,7 +18,7 @@ final class MealEntity {
     var carbs: Double
     var fat: Double
     var date: Date
-    var imageURL: String?
+    @Attribute(.externalStorage) var imageData: Data?
     
     init(
         id: UUID,
@@ -28,7 +28,7 @@ final class MealEntity {
         carbs: Double,
         fat: Double,
         date: Date,
-        imageURL: String? = nil
+        imageData: Data? = nil
     ) {
         self.id = id
         self.name = name
@@ -37,7 +37,7 @@ final class MealEntity {
         self.carbs = carbs
         self.fat = fat
         self.date = date
-        self.imageURL = imageURL
+        self.imageData = imageData
     }
 }
 
@@ -52,7 +52,7 @@ extension MealEntity {
             carbs: meal.carbs,
             fat: meal.fat,
             date: meal.date,
-            imageURL: meal.imageURL
+            imageData: meal.imageData
         )
     }
 
@@ -65,7 +65,7 @@ extension MealEntity {
             protein: protein,
             carbs: carbs,
             fat: fat,
-            imageURL: imageURL
+            imageData: imageData 
         )
     }
 }

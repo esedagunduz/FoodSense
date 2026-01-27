@@ -9,19 +9,20 @@ import SwiftUI
 
 struct MainTabView: View {
     let storageService: StorageServiceProtocol
+    @StateObject private var homeViewModel: HomeViewModel
     @State private var selectedTab = 0
     @State private var showingScan = false
     
     init(storageService: StorageServiceProtocol) {
         self.storageService = storageService
-
+        _homeViewModel = StateObject(wrappedValue: HomeViewModel(storageService: storageService))
         UITabBar.appearance().isHidden = true
     }
     
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                HomeView(viewModel: HomeViewModel(storageService: storageService))
+                HomeView(viewModel: homeViewModel)
                     .tag(0)
                 
                 Color.clear
@@ -39,7 +40,11 @@ struct MainTabView: View {
             ScanView(
                 viewModel: ScanViewModel(
                     scanService: GeminiFoodScanService(),
-                    storageService: storageService
+                    storageService: storageService,
+                    selectedDate: homeViewModel.state.selectedDate,
+                    onMealSaved: {
+                        homeViewModel.loadMeals() 
+                    }
                 )
             )
         }

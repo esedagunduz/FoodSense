@@ -32,7 +32,9 @@ final class GeminiFoodScanService:FoodScanServiceProtocol{
         )
     }
     func analyzeFood(image: UIImage) async throws -> FoodScanResult {
-        let optimizedImage = try prepareImage(image)
+        guard let optimizedImage = image.optimizedForAPI(maxSize: Config.maxImageSize) else {
+            throw FoodScanError.invalidImage
+        }
         let response = try await model.generateContent(createPrompt(),optimizedImage)
         guard let text = response.text else {
             throw FoodScanError.invalidResponse
@@ -44,22 +46,6 @@ final class GeminiFoodScanService:FoodScanServiceProtocol{
         return result
     }
     
-    private func prepareImage(_ image:UIImage)throws->UIImage{
-        let size = image.size
-        let maxSize = Config.maxImageSize
-        guard size.width > 0 && size.height > 0 else {
-            throw FoodScanError.invalidImage
-        }
-        if size.width <= maxSize && size.height <= maxSize {
-            return image
-        }
-        let ratio = min(maxSize / size.width, maxSize / size.height)
-        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
-        
-        return UIGraphicsImageRenderer(size: newSize).image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
-        }
-    }
     
     private func createPrompt() -> String {
         """

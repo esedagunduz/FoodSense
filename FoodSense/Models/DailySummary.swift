@@ -78,7 +78,7 @@ struct DailySummary:Codable,Equatable{
     }
     
     var remainingCalories: Double {
-        remaining(goal: goals.calories, current: totalCalories)
+        max(0, goals.calories - totalCalories)
     }
     
     var remainingProtein: Double {
@@ -117,5 +117,11 @@ struct DailySummary:Codable,Equatable{
         meals.count
     }
     
+    var calorieOverage: Double {
+        max(0, totalCalories - goals.calories)
+    }
 
+    var isOverCalorieGoal: Bool {
+        totalCalories > goals.calories
+    }
 }

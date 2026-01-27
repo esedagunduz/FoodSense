@@ -14,7 +14,7 @@ struct Meal:Identifiable,Codable,Equatable{
     let protein:Double
     let fat:Double
     let date:Date
-    let imageURL:String?
+    let imageData: Data?
     
     init(
         id: UUID = UUID(),
@@ -24,7 +24,7 @@ struct Meal:Identifiable,Codable,Equatable{
         protein: Double,
         carbs: Double,
         fat: Double,
-        imageURL: String? = nil
+        imageData: Data? = nil
     ) {
         self.id = id
         self.name = name
@@ -33,7 +33,7 @@ struct Meal:Identifiable,Codable,Equatable{
         self.protein = protein
         self.fat = fat
         self.date = date
-        self.imageURL = imageURL
+        self.imageData = imageData
     }
     var proteinCalories :Double {
         protein*4

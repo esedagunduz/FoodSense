@@ -23,15 +23,15 @@ struct FoodScanResult:Codable,Equatable{
         confidence >= Configuration.minimumConfidenceScore
     }
     
-    func toMeal() -> Meal {
+    func toMeal(imageData: Data?, date: Date = Date()) -> Meal {
         Meal(
             name: foodName,
-            date: Date(),
+            date: date,
             calories: calories,
             protein: protein,
             carbs: carbs,
             fat: fat,
-            imageURL: nil
+            imageData: imageData
         )
     }
 }
