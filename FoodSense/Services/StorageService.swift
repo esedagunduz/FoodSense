@@ -71,12 +71,12 @@ actor StorageService:StorageServiceProtocol{
         let existingProfiles = try modelContext.fetch(descriptor)
         
         if let existing = existingProfiles.first {
-            existing.name = profile.name
             existing.caloriesGoal = profile.goals.calories
             existing.proteinGoal = profile.goals.protein
             existing.carbsGoal = profile.goals.carbs
             existing.fatGoal = profile.goals.fat
             existing.updatedAt = Date()
+            existing.isProfileSetup = profile.isProfileSetup
         } else {
             let entity = UserProfileEntity(from: profile)
             modelContext.insert(entity)
@@ -89,13 +89,10 @@ actor StorageService:StorageServiceProtocol{
         let descriptor = FetchDescriptor<UserProfileEntity>()
         let profiles = try modelContext.fetch(descriptor)
         
-        if let entity = profiles.first {
-            return entity.toUserProfile()
+        guard let entity = profiles.first else{
+            return nil
         }
-    
-        let defaultProfile = UserProfile()
-            try await saveUserProfile(defaultProfile)
-            return defaultProfile
+        return entity.toUserProfile()
     }
     
     func deleteOldMeals(before date: Date) async throws {

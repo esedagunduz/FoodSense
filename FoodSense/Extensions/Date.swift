@@ -18,7 +18,7 @@ extension Date {
 
     func shortDate() -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM"
+        formatter.dateFormat = "MMMM d"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.string(from: self)
     }

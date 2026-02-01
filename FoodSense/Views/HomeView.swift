@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     @State private var showCalendar = false
+    @State private var showProfileSettings = false
     
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -67,21 +68,35 @@ struct HomeView: View {
                         displayedComponents: [.date]
                     )
                     .datePickerStyle(.graphical)
-                    .padding()
+                    .tint(AppColors.accent.opacity(0.7))
+                    .colorScheme(.dark)
                     
                     Spacer()
                 }
                 .background(AppColors.background)
                 .navigationTitle("Select Date")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarItems(trailing:
-                    Button("Done") {
-                        showCalendar = false
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            showCalendar = false
+                        }
+                        .foregroundColor(AppColors.accent)
                     }
-                    .foregroundColor(AppColors.accent)
-                )
+                }
             }
+            .preferredColorScheme(.dark)
+            .presentationBackground(AppColors.background)
         }
+        .sheet(isPresented: $showProfileSettings) {
+            ProfileSettingsView(
+                storageService: viewModel.storageService,
+                onProfileUpdated: {
+                    viewModel.loadMeals()
+                }
+            )
+        }
+
     }
     
     // MARK: - Header Section
@@ -107,6 +122,14 @@ struct HomeView: View {
                 .frame(width: 44, height: 44)
                 .background(AppColors.cardBackground)
                 .clipShape(Circle())
+            }
+            Button(action: { showProfileSettings = true }){
+                Image(systemName: "gearshape")
+                    .font(.system(size: 20))
+                    .foregroundColor(AppColors.primaryText)
+                    .frame(width: 44, height: 44)
+                    .background(AppColors.cardBackground)
+                    .clipShape(Circle())
             }
         }
         .padding(.top, 10)

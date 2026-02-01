@@ -11,7 +11,7 @@ import FirebaseCore
 
 @main
 struct FoodSenseApp: App {
-    
+    @State private var shouldShowOnboarding: Bool?
     private let repository: StorageRepository
     
     init() {
@@ -40,7 +40,27 @@ struct FoodSenseApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainTabView(storageService: repository)
+            Group {
+                if let showOnboarding = shouldShowOnboarding {
+                    if showOnboarding {
+                        OnboardingView(
+                            storageService: repository,
+                            onComplete: {
+                                shouldShowOnboarding = false
+                            }
+                        )
+                    } else {
+                        MainTabView(storageService: repository)
+                    }
+                    
+                }
+            }
+            .task {
+                if shouldShowOnboarding == nil {
+                    let profile = try? await repository.fetchUserProfile()
+                    shouldShowOnboarding = profile?.isProfileSetup == false || profile == nil
+                }
+            }
         }
     }
 }

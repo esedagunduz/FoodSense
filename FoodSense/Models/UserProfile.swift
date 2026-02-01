@@ -7,27 +7,28 @@
 
 import Foundation
 struct UserProfile:Equatable, Codable{
-    var name: String
     var goals: NutritionGoals
     var createdAt: Date
     var updatedAt: Date
-    init(name: String = "Kullanıcı",
-         goals: NutritionGoals = .initial,
+    var isProfileSetup: Bool
+    init(
+        goals: NutritionGoals = .initial,
          createdAt: Date = Date(),
-         updatedAt: Date = Date()
+         updatedAt: Date = Date(),
+        isProfileSetup: Bool = false
     ) {
-        self.name = name
         self.goals = goals
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.isProfileSetup = isProfileSetup
     }
     mutating func updateGoals(_ newGoals:NutritionGoals){
         self.goals = newGoals
         self.updatedAt = Date()
         
     }
-    mutating func updateName(_ newName:String){
-        self.name = newName
+    mutating func completeSetup() {
+        self.isProfileSetup = true
         self.updatedAt = Date()
     }
     
@@ -36,12 +37,12 @@ struct UserProfile:Equatable, Codable{
 
 extension UserProfile {
     static let sample = UserProfile(
-        name: "Ebrar Seda",
         goals: NutritionGoals(
             calories: 2000,
             protein: 150,
             carbs: 250,
             fat: 65
-        )
+        ),
+        isProfileSetup: true
     )
 }

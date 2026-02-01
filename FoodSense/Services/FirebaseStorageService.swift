@@ -120,13 +120,13 @@ final class FirebaseStorageService: StorageServiceProtocol {
     
     func saveUserProfile(_ profile: UserProfile) async throws {
         let data: [String: Any] = [
-            "name": profile.name,
             "caloriesGoal": profile.goals.calories,
             "proteinGoal": profile.goals.protein,
             "carbsGoal": profile.goals.carbs,
             "fatGoal": profile.goals.fat,
             "createdAt": Timestamp(date: profile.createdAt),
-            "updatedAt": FieldValue.serverTimestamp()
+            "updatedAt": FieldValue.serverTimestamp(),
+            "isProfileSetup": profile.isProfileSetup
         ]
         
         let document = await profileDocument()
@@ -139,17 +139,16 @@ final class FirebaseStorageService: StorageServiceProtocol {
         guard let data = snapshot.data() else { return nil }
         
         guard
-            let name = data["name"] as? String,
             let caloriesGoal = data["caloriesGoal"] as? Double,
             let proteinGoal = data["proteinGoal"] as? Double,
             let carbsGoal = data["carbsGoal"] as? Double,
             let fatGoal = data["fatGoal"] as? Double,
             let createdAt = (data["createdAt"] as? Timestamp)?.dateValue(),
-            let updatedAt = (data["updatedAt"] as? Timestamp)?.dateValue()
+            let updatedAt = (data["updatedAt"] as? Timestamp)?.dateValue(),
+            let isProfileSetup = data["isProfileSetup"] as? Bool
         else { return nil }
         
         return UserProfile(
-            name: name,
             goals: NutritionGoals(
                 calories: caloriesGoal,
                 protein: proteinGoal,
@@ -157,7 +156,8 @@ final class FirebaseStorageService: StorageServiceProtocol {
                 fat: fatGoal
             ),
             createdAt: createdAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            isProfileSetup: isProfileSetup
         )
     }
 
