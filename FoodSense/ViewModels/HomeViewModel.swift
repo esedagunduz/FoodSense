@@ -11,16 +11,19 @@ struct HomeState:Equatable{
     var isLoading:Bool
     var error: HomeError?
     var selectedDate: Date
+    var isInitialLoading: Bool = true
     
     init(dailySummary: DailySummary = DailySummary(),
          isLoading: Bool = false,
          error:HomeError? = nil,
-         selectedDate: Date = Date()
+         selectedDate: Date = Date(),
+         isInitialLoading: Bool = true
     ) {
         self.dailySummary = dailySummary
         self.isLoading = isLoading
         self.error = error
         self.selectedDate = selectedDate
+        self.isInitialLoading = isInitialLoading
     }
 }
 
@@ -57,6 +60,7 @@ final class HomeViewModel:ObservableObject{
         Task {
                 await fetchAndUpdateSummary()
                 state.isLoading = false
+                state.isInitialLoading = false
         }
     }
     
@@ -97,10 +101,11 @@ final class HomeViewModel:ObservableObject{
         do{
             let meals = try await storageService.fetchMeals(for: state.selectedDate)
             let userProfile = try await storageService.fetchUserProfile()
+            let goals = userProfile?.goals ?? .initial
             let summary = DailySummary(
                 date: state.selectedDate,
                 meals: meals,
-                goals: userProfile!.goals
+                goals: goals
             )
             state.dailySummary = summary
         }catch{

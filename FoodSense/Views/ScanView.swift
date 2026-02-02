@@ -25,8 +25,11 @@ struct ScanView: View {
             ImagePicker(image: selectedImage)
         }
         .alert("Error", isPresented: hasError) {
-            Button("OK", role: .cancel) {
-                viewModel.dismissError()
+            Button("Try Again") {
+                viewModel.retry()
+            }
+            Button("Cancel", role: .cancel) {
+                viewModel.reset()
             }
         } message: {
             if let error = viewModel.state.error {

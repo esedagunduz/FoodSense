@@ -20,28 +20,30 @@ final class FirebaseStorageService: StorageServiceProtocol {
         self.auth = auth
     }
 
-    private func userId() async -> String {
-        if auth.currentUser == nil {
-            do {
-                let result = try await auth.signInAnonymously()
-                return result.user.uid
-            } catch {
-                print("Firebase Auth failed: \(error)")
-                return "local_only"
-            }
+    private func userId() async throws -> String {
+        if let currentUser = auth.currentUser {
+            return currentUser.uid
         }
-        return auth.currentUser?.uid ?? "local_only"
+        
+        do {
+            let result = try await auth.signInAnonymously()
+            print("Anonymous auth successful: \(result.user.uid)")
+            return result.user.uid
+        } catch {
+            print("Firebase Auth failed: \(error)")
+            throw error
+        }
     }
 
     // MARK: - Collections
     
-    private func mealsCollection() async -> CollectionReference {
-        let uid = await userId()
+    private func mealsCollection() async throws -> CollectionReference {
+        let uid = try await userId()
         return db.collection("users").document(uid).collection("meals")
     }
     
-    private func profileDocument() async -> DocumentReference {
-        let uid = await userId()
+    private func profileDocument() async throws -> DocumentReference {
+        let uid = try await userId()
         return db.collection("users").document(uid)
     }
     
@@ -62,7 +64,7 @@ final class FirebaseStorageService: StorageServiceProtocol {
             data["imageData"] = imageData.base64EncodedString()
         }
         
-        let collection = await mealsCollection()
+        let collection = try await mealsCollection()
         try await collection.document(meal.id.uuidString).setData(data)
     }
     
@@ -73,7 +75,7 @@ final class FirebaseStorageService: StorageServiceProtocol {
             return []
         }
         
-        let collection = await mealsCollection()
+        let collection = try await mealsCollection()
         let snapshot = try await collection
             .whereField("date", isGreaterThanOrEqualTo: Timestamp(date: startOfDay))
             .whereField("date", isLessThan: Timestamp(date: endOfDay))
@@ -112,7 +114,7 @@ final class FirebaseStorageService: StorageServiceProtocol {
     }
     
     func deleteMeal(_ meal: Meal) async throws {
-        let collection = await mealsCollection()
+        let collection = try await mealsCollection()
         try await collection.document(meal.id.uuidString).delete()
     }
     
@@ -129,12 +131,12 @@ final class FirebaseStorageService: StorageServiceProtocol {
             "isProfileSetup": profile.isProfileSetup
         ]
         
-        let document = await profileDocument()
+        let document = try await profileDocument()
         try await document.setData(data, merge: true)
     }
     
     func fetchUserProfile() async throws -> UserProfile? {
-        let document = await profileDocument()
+        let document = try await profileDocument()
         let snapshot = try await document.getDocument()
         guard let data = snapshot.data() else { return nil }
         

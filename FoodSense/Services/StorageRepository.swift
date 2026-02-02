@@ -11,7 +11,7 @@ final class StorageRepository: StorageServiceProtocol {
 
     
     private let localService: StorageService
-    let remoteService:StorageServiceProtocol
+    private let remoteService:StorageServiceProtocol
     
     private var lastCacheYearMonth: (year: Int, month: Int)?
 
@@ -36,7 +36,12 @@ final class StorageRepository: StorageServiceProtocol {
         }()
         
         try await firebaseTask
-        try? await swiftDataTask
+    
+        do {
+            try await swiftDataTask
+        } catch {
+            print("Cache update failed: \(error)")
+        }
         
         await cleanupIfNeeded()
     }
@@ -54,7 +59,11 @@ final class StorageRepository: StorageServiceProtocol {
         async let swiftDataDelete = localService.deleteMeal(meal)
         
         try await firebaseDelete
-        try? await swiftDataDelete
+        do {
+            try await swiftDataDelete
+        } catch {
+            print("Local cache delete failed: \(error)")
+        }
     }
     
     // MARK: - Profile Operations
@@ -64,18 +73,23 @@ final class StorageRepository: StorageServiceProtocol {
         async let swiftDataSave = localService.saveUserProfile(profile)
         
         try await firebaseSave
-        try await swiftDataSave
+        do {
+            try await swiftDataSave
+        } catch {
+            print("Local profile cache failed: \(error)")
+
+        }
     }
     
     func fetchUserProfile() async throws -> UserProfile? {
-        if let localProfile = try await localService.fetchUserProfile(){
-            
+        if let localProfile = try await localService.fetchUserProfile() {
             Task.detached(priority: .background) { [weak self] in
-                await self?.syncProfileFromRemote()
+                await self?.syncProfileFromRemote(localProfile)
             }
             return localProfile
         }
-        if let remoteProfile = try await remoteService.fetchUserProfile(){
+        
+        if let remoteProfile = try await remoteService.fetchUserProfile() {
             try? await localService.saveUserProfile(remoteProfile)
             return remoteProfile
         }
@@ -94,7 +108,9 @@ final class StorageRepository: StorageServiceProtocol {
     
     private func cleanupCache(force: Bool) async {
         let calendar = Calendar.current
-        let nowComponents = calendar.dateComponents([.year, .month], from: Date())
+        let now = Date()
+        let nowComponents = calendar.dateComponents([.year, .month], from: now)
+        
         if !force {
             if let last = lastCacheYearMonth,
                last.year == nowComponents.year,
@@ -103,15 +119,17 @@ final class StorageRepository: StorageServiceProtocol {
             }
         }
         
-        if let last = lastCacheYearMonth {
-            if let startOfMonth = calendar.date(from: DateComponents(year: last.year, month: last.month, day: 1)),
-               let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth) {
-                do {
-                    try await localService.deleteOldMeals(before: calendar.startOfDay(for: endOfMonth.addingTimeInterval(1)))
-                } catch {
-                    print("Monthly cache cleanup failed: \(error)")
-                }
-            }
+        guard let currentMonthStart = calendar.date(from: DateComponents(
+            year: nowComponents.year,
+            month: nowComponents.month,
+            day: 1
+        )) else { return }
+        
+        do {
+            try await localService.deleteOldMeals(before: currentMonthStart)
+            print("Cleaned cache: Deleted all meals before \(currentMonthStart.formatted())")
+        } catch {
+            print("Cache cleanup failed: \(error)")
         }
 
         lastCacheYearMonth = (year: nowComponents.year ?? 0, month: nowComponents.month ?? 0)
@@ -134,7 +152,7 @@ final class StorageRepository: StorageServiceProtocol {
         let localMeals = try await localService.fetchMeals(for: date)
         
         if !localMeals.isEmpty {
-            Task.detached(priority: .background) { [weak self] in
+            Task(priority: .background) { [weak self] in
                 await self?.syncMealsFromRemote(for: date)
             }
             return localMeals
@@ -158,13 +176,22 @@ final class StorageRepository: StorageServiceProtocol {
         }
     }
     
-    private func syncProfileFromRemote() async {
+    private func syncProfileFromRemote(_ localProfile: UserProfile) async {
         do {
-            if let remoteProfile = try await remoteService.fetchUserProfile() {
-                try? await localService.saveUserProfile(remoteProfile)
+            guard let remoteProfile = try await remoteService.fetchUserProfile() else {
+                return
             }
+            
+            guard remoteProfile.updatedAt > localProfile.updatedAt else {
+                print("Local profile is up to date")
+                return
+            }
+            
+            try? await localService.saveUserProfile(remoteProfile)
+            print("Profile synced from remote")
+            
         } catch {
-            print("Profile sync failed: \(error)")
+            print("Background profile sync failed: \(error)")
         }
     }
 }

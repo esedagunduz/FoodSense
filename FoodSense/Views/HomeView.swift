@@ -22,18 +22,23 @@ struct HomeView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             AppColors.background
                 .ignoresSafeArea()
-            
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
-                    headerSection
-                    calorieCard
-                    mealsSection
-                    Spacer(minLength: 100)
+            if viewModel.state.isInitialLoading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: AppColors.accent))
+                    .scaleEffect(1.5)
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 24) {
+                        headerSection
+                        calorieCard
+                        mealsSection
+                        Spacer(minLength: 100)
+                    }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 20)
             }
         }
         .onAppear {

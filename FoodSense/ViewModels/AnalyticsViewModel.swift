@@ -41,14 +41,14 @@ final class AnalyticsViewModel: ObservableObject {
             let dateRange = state.period.dateRange
             let meals = try await fetchAllMeals(in: dateRange)
             let profile = try await storageService.fetchUserProfile()
-            
+            let goals = profile?.goals ?? .initial
             guard !meals.isEmpty else {
                 state.error = .insufficientData
                 state.analytics = .empty
                 return
             }
             
-            state.analytics = calculateAnalytics(meals: meals, goals: profile!.goals, dateRange: dateRange)
+            state.analytics = calculateAnalytics(meals: meals, goals: goals, dateRange: dateRange)
         } catch {
             state.error = .loadFailed
             state.analytics = .empty
