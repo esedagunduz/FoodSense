@@ -37,19 +37,6 @@ struct DailySummary:Codable,Equatable{
         guard goal>0 else {return 0}
         return current/goal
     }
-    var calorieProgressRaw:Double{
-        progressRaw(current: totalCalories, goal: goals.calories)
-    }
-    var proteinProgressRaw:Double{
-        progressRaw(current: totalProtein, goal: goals.protein)
-    }
-    var carbsProgressRaw: Double {
-        progressRaw(current: totalCarbs, goal: goals.carbs)
-    }
-    
-    var fatProgressRaw: Double {
-        progressRaw(current: totalFat, goal: goals.fat)
-    }
     
     
     private func progressClamped(_ raw: Double) -> Double {
@@ -57,64 +44,12 @@ struct DailySummary:Codable,Equatable{
     }
     
     var calorieProgressClamped: Double {
-        progressClamped(calorieProgressRaw)
-    }
-    
-    var proteinProgressClamped: Double {
-        progressClamped(proteinProgressRaw)
-    }
-    
-    var carbsProgressClamped: Double {
-        progressClamped(carbsProgressRaw)
-    }
-    
-    var fatProgressClamped: Double {
-        progressClamped(fatProgressRaw)
-    }
-    
-    
-    private func remaining(goal: Double, current: Double) -> Double {
-        goal - current
+        let raw = progressRaw(current: totalCalories, goal: goals.calories)
+        return progressClamped(raw)
     }
     
     var remainingCalories: Double {
         max(0, goals.calories - totalCalories)
-    }
-    
-    var remainingProtein: Double {
-        remaining(goal: goals.protein, current: totalProtein)
-    }
-    
-    var remainingCarbs: Double {
-        remaining(goal: goals.carbs, current: totalCarbs)
-    }
-    
-    var remainingFat: Double {
-        remaining(goal: goals.fat, current: totalFat)
-    }
-    
-    private func status(progressRaw: Double) -> NutritionStatus {
-        NutritionStatus.calculate(progressRaw: progressRaw)
-    }
-    
-    var calorieStatus: NutritionStatus {
-        status(progressRaw: calorieProgressRaw)
-    }
-    
-    var proteinStatus: NutritionStatus {
-        status(progressRaw: proteinProgressRaw)
-    }
-    
-    var carbsStatus: NutritionStatus {
-        status(progressRaw: carbsProgressRaw)
-    }
-    
-    var fatStatus: NutritionStatus {
-        status(progressRaw: fatProgressRaw)
-    }
-    
-    var mealsCount: Int {
-        meals.count
     }
     
     var calorieOverage: Double {

@@ -28,20 +28,4 @@ struct NutritionGoals:Codable,Equatable{
     }
 
 }
-enum NutritionStatus: Equatable {
-    case low
-    case onTrack
-    case over
-    
-    static func calculate(progressRaw: Double) -> Self {
-        switch progressRaw {
-        case ..<0.8:
-            return .low
-        case 0.8...1.0:
-            return .onTrack
-        default:
-            return .over
-        }
-    }
-}
 
