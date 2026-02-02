@@ -62,12 +62,6 @@ struct CalorieCardView: View {
             .frame(height: 160)
             
             HStack(spacing: 12) {
-                MacroCard(
-                    label: "Carbs",
-                    value: summary.totalCarbs,
-                    goal: summary.goals.carbs,
-                    color: AppColors.carbColor
-                )
                 
                 MacroCard(
                     label: "Protein",
@@ -75,7 +69,12 @@ struct CalorieCardView: View {
                     goal: summary.goals.protein,
                     color: AppColors.proteinColor
                 )
-                
+                MacroCard(
+                    label: "Carbs",
+                    value: summary.totalCarbs,
+                    goal: summary.goals.carbs,
+                    color: AppColors.carbColor
+                )
                 MacroCard(
                     label: "Fat",
                     value: summary.totalFat,
